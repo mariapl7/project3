@@ -1,14 +1,13 @@
 import json
 from datetime import datetime
-from utils import (load_user_settings, calculate_date_range,
-                   fetch_stock_prices, fetch_currency_rates,
-                   get_greeting, get_card_info, get_top_transactions,
-                   fetch_sp500_prices)
+from src.utils import (load_user_settings, calculate_date_range,
+                       fetch_stock_prices, fetch_currency_rates,
+                       get_greeting, get_card_info, get_top_transactions,
+                       fetch_sp500_prices)
 
 
-# Пример API URL для курсов валют и цен акций S&P 500
-CURRENCY_API_URL = "https://api.exchangeratesapi.io/latest"  # Замените на актуальный API
-SP500_API_URL = "https://api.example.com/sp500"  # Замените на актуальный API
+CURRENCY_API_URL = "https://api.exchangeratesapi.io/latest"
+SP500_API_URL = "https://api.example.com/sp500"
 
 
 def events_view(date_str):

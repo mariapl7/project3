@@ -5,7 +5,6 @@ from datetime import datetime, timedelta
 from pandas import DataFrame
 import os
 
-# Установите уровень логирования
 logging.basicConfig(level=logging.INFO)
 
 
@@ -17,7 +16,6 @@ def load_data(filepath: str) -> DataFrame:
 
     transactions_df = pd.read_excel(filepath, engine='openpyxl')
 
-    # Преобразуем поля дат в datetime
     transactions_df['Дата операции'] = pd.to_datetime(transactions_df['Дата операции'])
     transactions_df['Дата платежа'] = pd.to_datetime(transactions_df['Дата платежа'])
 
@@ -46,7 +44,6 @@ def expenses_by_weekday(transactions_df: DataFrame, date: str = None) -> str:
             date = datetime.now().strftime("%Y-%m-%d")
         reference_date = datetime.strptime(date, "%Y-%m-%d")
 
-        # Добавляем столбец с днем недели
         transactions_df['weekday'] = transactions_df['Дата операции'].dt.day_name()
         weekly_expenses = (
             transactions_df.groupby('weekday')['Сумма операции'].sum()
@@ -54,7 +51,6 @@ def expenses_by_weekday(transactions_df: DataFrame, date: str = None) -> str:
             .sort_values('weekday')
         )
 
-        # Формируем ответ
         response_data = {
             'weekly_expenses': weekly_expenses.to_dict(orient='records'),
             'reference_date': reference_date.strftime("%Y-%m-%d")
@@ -72,17 +68,14 @@ def expenses_by_workday_or_weekend(transactions_df: DataFrame, category: str, re
         end_date = reference_date
         start_date = reference_date - timedelta(days=90)
 
-        # Фильтруем по категории и датам
         filtered_df = transactions_df[(transactions_df['Категория'] == category) &
                                       (transactions_df['Дата операции'] >= start_date) &
                                       (transactions_df['Дата операции'] <= end_date)]
 
-        # Разделяем траты на рабочие и выходные дни
         filtered_df['is_workday'] = filtered_df['Дата операции'].dt.dayofweek < 5
         workday_expenses = filtered_df[filtered_df['is_workday']]['Сумма операции'].sum()
         weekend_expenses = filtered_df[~filtered_df['is_workday']]['Сумма операции'].sum()
 
-        # Формируем ответ
         response_data = {
             'category': category,
             'workday_expenses': workday_expenses,
@@ -98,8 +91,6 @@ def expenses_by_workday_or_weekend(transactions_df: DataFrame, category: str, re
         return json.dumps({'error': str(e)})
 
 
-# Пример использования
 if __name__ == '__main__':
-    # Загрузка данных из Excel
     filepath = r'C:\Users\miplo\PycharmProjects\pythonProject3\data\operations.xlsx'
     df_transactions = load_data(filepath)
